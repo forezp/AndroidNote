@@ -1,0 +1,42 @@
+//∂‡±Ì≤È—Ø
+select  a.*,b.name from t1 as a ,t2 as b where t1.approvedId=t2.id 
+
+select  a.*,b.name from t1 as a  left join t2 as b on t1.approvedId=t2.id 
+
+SELECT t.*,us.user_name as approve_name FROM
+(SELECT u.user_name as creator_name ,f.* from tb_user u INNER JOIN
+(SELECT
+a.*,
+c.name AS equipment_name
+FROM
+tb_repair AS a ,
+tb_products AS b ,
+tb_equipment AS c
+WHERE
+a.product_id = b.id 
+AND
+b.equipment_id = c.id) as f
+ON u.id = f.creator_id) as t
+INNER JOIN tb_user us
+ON us.id = t.approve_id
+
+
+
+SELECT t.*,us.user_name as approve_name FROM
+(SELECT u.user_name as creator_name ,f.* from tb_user u INNER JOIN
+(SELECT
+a.*,
+c.name AS equipment_name
+FROM
+tb_repair AS a ,
+tb_products AS b ,
+tb_equipment AS c
+WHERE
+a.product_id = b.id 
+AND
+b.equipment_id = c.id) as f
+ON u.id = f.creator_id) as t
+INNER JOIN tb_user us
+ON us.id = t.approve_id
+
+
