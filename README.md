@@ -3,7 +3,7 @@ this is a note for android note repostiory
 I'll collect many study method of android.
 
 ### popupWindow两中常见写法
-
+```java
   @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -25,8 +25,11 @@ I'll collect many study method of android.
                 break;
         }
     }
+```
 ####方法1
 这种相当于封装好了，很多Activity都可以用一个模板，推荐使用这种。
+
+```jvav
 new SelectionTemp(MainActivity.this,btn1,MainActivity.this,list,1).setOnDismissListener(this);
 
 
@@ -72,8 +75,9 @@ new SelectionTemp(MainActivity.this,btn1,MainActivity.this,list,1).setOnDismissL
     }
 
 
-
+```
 ####方法2
+```java
  private void showpopup(){
 
         View contentView = LayoutInflater.from(MainActivity.this).inflate(
@@ -116,7 +120,7 @@ new SelectionTemp(MainActivity.this,btn1,MainActivity.this,list,1).setOnDismissL
         popupWindow.showAsDropDown(btn2);
 
     }
-    
+    ```
     ## Fragment 向activity 传值，采用接口的方式
     
     /**
@@ -125,6 +129,7 @@ new SelectionTemp(MainActivity.this,btn1,MainActivity.this,list,1).setOnDismissL
 *  该方法用回调 接口的方式 
 /
 1.定义接口
+```java
 public interface IFragmentCallBack {
     public void callBackFun(Bundle arg0);
 }
@@ -159,6 +164,7 @@ public class MenuLeftFragment extends Fragment
         });
     }
 }
+```
 
 如果对传值机制不了解或者很麻烦的话，建议使用广播或者框架EventBus.
 
@@ -168,6 +174,7 @@ public class MenuLeftFragment extends Fragment
 静态注册和代码注册，具体点代码
 有序广播和普通广播。
 ####动态注册
+```java
 Intent intent = new Intent("com.trilink.artapp.newStudentCount");  
 		intent.putExtra("newStudentCount", String.valueOf(newStudentCount)); 
 		sendBroadcast(intent);  
@@ -218,6 +225,8 @@ Intent intent = new Intent("com.trilink.artapp.newStudentCount");
 　   
 　   }
 　}
+　
+　```
 ###gitbus 学习
 多敲命令就会了。
 
