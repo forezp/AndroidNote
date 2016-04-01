@@ -1,3 +1,20 @@
+1.求和：
+分别求出d01、d02、d03......d31列的和；
+SELECT count(d01),count(d02),count(d03).....count(d31) FROM m201201;
+
+分别求出3006、3008、3010、3016、3034每一行中d01——d31之间记录的和
+SELECT (d01+d02+d03+....+d31) as d_all FROM m201201 WHERE name IN('3006','3008','3010','3016','3034');
+
+2.
+以下去求出每个学生的总成绩方法
+-- 方法1
+select a.id,a.name,(select sum(s.score) from scores s where s.uid=a.id) score from users a;
+
+-- 方法2
+select a.id,a.name,sum(s.score) score from users a left join scores s on a.id=s.uid group by a.id;
+
+3.
+
 //多表查询
 select  a.*,b.name from t1 as a ,t2 as b where t1.approvedId=t2.id 
 
