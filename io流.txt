@@ -1,0 +1,235 @@
+Java IO 的一般使用原则 ：  
+一、按数据来源（去向）分类：
+1 、是文件： FileInputStream, FileOutputStream, ( 字节流 )FileReader, FileWriter( 字符 )
+2 、是 byte[] ： ByteArrayInputStream, ByteArrayOutputStream( 字节流 )
+3 、是 Char[]: CharArrayReader, CharArrayWriter( 字符流 )
+4 、是 String: StringBufferInputStream, StringBufferOuputStream ( 字节流 )StringReader, StringWriter( 字符流 )
+5 、网络数据流： InputStream, OutputStream,( 字节流 ) Reader, Writer( 字符流 )
+
+二、按是否格式化输出分：
+1 、要格式化输出： PrintStream, PrintWriter
+
+三、按是否要缓冲分：
+1 、要缓冲： BufferedInputStream, BufferedOutputStream,( 字节流 ) BufferedReader, BufferedWriter( 字符流 )
+
+四、按数据格式分：
+1 、二进制格式（只要不能确定是纯文本的） : InputStream, OutputStream 及其所有带 Stream 结束的子类
+2 、纯文本格式（含纯英文与汉字或其他编码方式）； Reader, Writer 及其所有带 Reader, Writer 的子类
+
+五、按输入输出分：
+1 、输入： Reader, InputStream 类型的子类
+2 、输出： Writer, OutputStream 类型的子类
+
+六、特殊需要：
+1 、从 Stream 到 Reader,Writer 的转换类： InputStreamReader, OutputStreamWriter
+2 、对象输入输出： ObjectInputStream, ObjectOutputStream
+3 、进程间通信： PipeInputStream, PipeOutputStream, PipeReader, PipeWriter
+4 、合并输入： SequenceInputStream
+5 、更特殊的需要： PushbackInputStream, PushbackReader, LineNumberInputStream, LineNumberReader
+
+决定使用哪个类以及它的构造进程的一般准则如下（不考虑特殊需要）：
+首先，考虑最原始的数据格式是什么： 原则四
+第二，是输入还是输出：原则五
+第三，是否需要转换流：原则六第 1 点
+第四，数据来源（去向）是什么：原则一
+第五，是否要缓冲：原则三 （特别注明：一定要注意的是 readLine() 是否有定义，有什么比 read, write 更特殊的输入或输出方法）
+第六，是否要格式化输出：原则二
+
+1.字符流 的读写
+
+public static void main(String[] args)throws IOException{
+		BufferedReader br=new BufferedReader(new FileReader("test.txt"));
+		BufferedWriter bw=new BufferedWriter(new FileWriter("test1.txt"));
+		String str;
+		while((str=br.readLine())!=null){
+			bw.write(str);
+			bw.newLine();//换行
+		}
+		br.close();
+		bw.close();
+
+	}
+}
+
+2.字节流转换成字符流
+public static void main(String[] args)throws Exception{
+		FileInputStream in=new FileInputStream("test.txt");
+		InputStreamReader isr=new InputStreamReader(in);
+		BufferedReader br=new BufferedReader(isr);  //  BufferedReader 和LineNunberReader 有readLine()方法
+		LineNumberReader lr=new LineNumberReader(br);
+		FileWriter fw=new FileWriter("txtqq.txt");
+		lr.setLineNumber(0);
+		String str;
+		while((str=lr.readLine())!=null){
+			fw.write(lr.getLineNumber()+":"+str);
+			fw.write("\r\n");
+		}
+		lr.close();
+		fw.close();
+
+	}
+
+3.ObjectStream
+
+public static void main(String[] args) throws Exception {
+		Person p=new Person("1","kobe",18);
+		//写入人这个对象
+		FileOutputStream fos=new FileOutputStream("objectStream.txt");
+		ObjectOutputStream oos=new ObjectOutputStream(fos);
+		oos.writeObject(p);
+		//读出人这个对象
+		FileInputStream fis=new FileInputStream("objectStream.txt");
+		ObjectInputStream ois=new ObjectInputStream(fis);
+		Person p1=(Person)ois.readObject();
+		System.out.println(p1.getId()+":"+p1.getName()+":"+p1.getAge());
+	}
+
+4.包装类DataOutputStream、DataInputStream为我们提供了多种对文件的写入和读取方法，
+如writeBoolean(),writeUTF()，writeChar，writeByte()，writeDouble()等和对应的read方法，
+这些方法极大的方便了我们的写入和读取操作，下面结合一个程序来探讨一下这些方法的使用。
+
+public static void main(String[] args) throws Exception{
+		FileOutputStream fos=new FileOutputStream("dataStream.txt");
+		BufferedOutputStream bos=new BufferedOutputStream(fos);
+		DataOutputStream dos=new DataOutputStream(bos);
+		dos.writeInt(1);
+		dos.writeChar('q');
+		dos.writeBoolean(true);
+		dos.writeUTF("你好，时间是是是");
+		dos.close();
+		BufferedInputStream in=new BufferedInputStream(new FileInputStream("dataStream.txt"));
+		DataInputStream dis=new DataInputStream(in);
+		System.out.println(dis.readInt());
+		
+		System.out.println(dis.readBoolean());
+		System.out.println(dis.readChar());
+		System.out.println(dis.readUTF());
+		dis.close();
+	}
+
+5.字节流的输入和输出
+
+public static void main(String[] args)throws Exception{
+		FileOutputStream out=new FileOutputStream("example.txt");
+		String str="传智播客";
+		byte[] b=str.getBytes();
+		for(int i=0;i<b.length;i++){
+			out.write(b[i]);
+			out.flush();
+		}
+		
+		
+		out.close();
+		
+	}
+
+	public static void main(String[] args)throws Exception {
+		FileInputStream in=new FileInputStream("test.txt");
+		int b=0;
+		while(true){
+			b=in.read();
+			if(b==-1){
+				break;
+			}
+			System.out.println(b);
+		}
+		in.close();
+	
+	}
+
+
+
+//FileInputStrem 的读写
+public static void main(String[] args) throws IOException{
+		InputStream in=new FileInputStream("test.txt");
+		OutputStream out=new FileOutputStream("F:\\test.txt");
+		int len;
+		long starttime=System.currentTimeMillis();
+		while(true){
+			len=in.read();
+			if(len==-1){
+				break;
+			}
+			out.write(len);
+		}
+		long endtime=System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+		in.close();
+		out.close();
+	}
+
+
+//bufferedStrem的读写
+public static void main(String[] args) {
+		BufferedInputStream bis=null;
+		BufferedOutputStream bos=null;
+		try{
+			 bis=new BufferedInputStream(new FileInputStream("test.txt"));
+			 bos=new BufferedOutputStream(new FileOutputStream("f:\\tset.txt"));
+			int len;
+			while((len=bis.read())!=-1){
+				bos.write(len);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			try{	
+				if(bis!=null){
+					bis.close();
+				}
+					
+			}
+			catch(Exception e){}
+		
+		
+			try{
+				if(bos!=null){
+				bos.close();
+				}
+			}
+			catch(Exception e){}
+		}
+		
+	}
+}
+
+//FileReader FileWriter
+
+public static void main(String[] args)throws IOException {
+		FileReader fr=new FileReader("test.txt");
+		int ch;
+		while((ch=fr.read())!=-1){
+			System.out.print((char)ch);
+		}
+		fr.close();
+	}
+
+
+	public static void main(String[] args) throws IOException{
+		FileWriter fw=new FileWriter("122.txt");
+		String str="你好，撒啊啊啊";
+		fw.write(str);
+		fw.write("\r\n");
+		fw.close();
+				
+	}
+
+
+	public class SS {
+	public static void main(String[] args) throws Exception {
+		File f = new File("d:\\大型数据库文件.mdf");	
+		FileInputStream fis = new FileInputStream(f);
+		//如果下面的语句使用BufferedOutputStream来修饰则带来更好的性能现。
+		FileOutputStream fos = new FileOutputStream("e:\\" + f.getName());	
+		int length = 0;
+		byte[] b = new byte[1024];
+		while((length = fis.read(b)) != -1)
+		{
+			fos.write(b, 0, length);
+		}
+		fos.close();
+		fis.close();
+	}
+}
+

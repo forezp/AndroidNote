@@ -1,0 +1,60 @@
+BLE分为三部分Service、Characteristic、Descriptor，这三部分都由UUID作为唯一标示符。一个蓝牙4.0的终端可以包含多个Service，一个Service可以包含多个Characteristic，
+一个Characteristic包含一个Value和多个Descriptor，一个Descriptor包含一个Value。一般来说，Characteristic是手机与BLE终端交换数据的关键，Characteristic有较多的跟权限相
+关的字段，例如PERMISSION和PROPERTY，而其中最常用的是PROPERTY，本文所用的BLE蓝牙模块竟然没有标准的Characteristic的PERMISSION。Characteristic的PROPERTY可以通过位运算符
+组合来设置读写属性，例如READ|WRITE、READ|WRITE_NO_RESPONSE|NOTIFY，因此读取PROPERTY后要分解成所用的组合（本文代码已含此分解方法）。
+
+ BluetoothManager bluetoothManager =  
+           (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);  
+  mBluetoothAdapter = bluetoothManager.getAdapter();  
+
+
+//扫描
+   private void scanLeDevice(final boolean enable) {  
+        if (enable) {  
+            // Stops scanning after a pre-defined scan period.  
+            mHandler.postDelayed(new Runnable() {  
+                @Override  
+                public void run() {  
+                    mScanning = false;  
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);  
+                    invalidateOptionsMenu();  
+                }  
+            }, SCAN_PERIOD);  
+  
+            mScanning = true;  
+            mBluetoothAdapter.startLeScan(mLeScanCallback);  
+        } else {  
+            mScanning = false;  
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);  
+        }  
+        invalidateOptionsMenu();  
+    }  
+
+
+     private BluetoothAdapter.LeScanCallback mLeScanCallback =  
+            new BluetoothAdapter.LeScanCallback() {  
+  
+        @Override  
+        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {  
+            runOnUiThread(new Runnable() {  
+                @Override  
+                public void run() {  
+                    mLeDeviceListAdapter.addDevice(device);  
+                    mLeDeviceListAdapter.notifyDataSetChanged();  
+                }  
+            });  
+        }  
+    }; 
+    
+    //连接设备
+
+    mBLE.connect(device.getAddress());
+    
+
+    //读数据
+    OnDataAvailableListener 
+
+   //写数据
+    //mNotifyCharacteristic.setValue(bytes);
+
+    mBluetoothGatt.writeCharacteristic(mNotifyCharacteristic);

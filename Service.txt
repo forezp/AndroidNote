@@ -1,0 +1,19 @@
+1.Context.startService()方式启动 
+
+Context.startService()方式的生命周期： 启动时，startService –> onCreate() –> onStart()停止时，stopService –> onDestroy()
+如果调用者直接退出而没有停止Service，则Service 会一直在后台运行 Context.startService()方法启动服务，在服务未被创建时，
+系统会先调用服务的onCreate()方法，接着调用onStart()方法。如果调用startService()方法前服务已经被创建，多次调用startService()方法
+并不会导致多次创建服务，但会导致多次调用onStart()方法。采用startService()方法启动的服务，只能调用Context.stopService()方法结束服务，
+服务结束时会调用onDestroy()方法
+
+2.可以和活动交互
+Context.bindService()方式启动：①Context.bindService()方式的生命周期： 绑定时,bindService -> onCreate() –> onBind()调用者退出了，
+即解绑定时,Srevice就会unbindService –>onUnbind() –> onDestory()Context.bindService()方式启动 Service的方法：绑定Service需要三个参数
+：bindService(intent, conn, Service.BIND_AUTO_CREATE);第一个：Intent对象第二个：ServiceConnection对象，创建该对象要实现它的onServiceConnected()和
+onServiceDisconnected()来判断连接成功或者是断开连接第三个：如何创建Service，一般指定绑定的时候自动创建附代码
+
+oncreate()-> onbind()-> onServiceConnected();
+
+3.IntentService
+IntentService是通过Handler looper message的方式实现了一个多线程的操作，同时耗时操作也可以被这个线程管理和执行
+，同时不会产生ANR的情况。
